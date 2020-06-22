@@ -10,46 +10,50 @@ namespace Zadatak_1
 {
     class Program
     {
+        static object l = new object();
+        public static Random random = new Random();
         static int[,] matrix;
         static int[] arrayRnd;
-        static object l = new object();
         static int[] oddNumbers;
-
+        /// <summary>
+        ///  Matrix creation method
+        /// </summary>
         static void Matrix()
         {
-            
-            lock (l)
+            // code lock
+             lock (l)
             {
-                
                 matrix = new int[100, 100];
-                
+                //Waiting for the second thread to generate numbers
                 while (arrayRnd == null)
                 {
                     Monitor.Wait(l);
                 }
-                                int k = 0;
+                int m = 0;
                 
-                while (k < arrayRnd.Length)
+                while (m < arrayRnd.Length)
                 {
                     for (int i = 0; i < matrix.GetLength(0); i++)
                     {
                         for (int j = 0; j < matrix.GetLength(1); j++)
                         {
-                            matrix[i, j] = arrayRnd[k];
-                            k++;
+                            matrix[i, j] = arrayRnd[m];
+                            m++;
                         }
                     }
                 }
             }
         }
-
+        /// <summary>
+        ///Method that generates random numbers
+        /// </summary>
         static void RandomNumbers()
         {
              
             lock (l)
             {
                 arrayRnd = new int[10000];
-                Random random = new Random();
+                
                 for (int i = 0; i < arrayRnd.Length; i++)
                 {
                     arrayRnd[i] = random.Next(10, 100);
@@ -58,6 +62,9 @@ namespace Zadatak_1
                 Monitor.Pulse(l);
             }
         }
+        /// <summary>
+        ///  A method that writes all odd elements of a matrix to a file
+        /// </summary>
         static void OddNumbers()
         {
             lock (l)
@@ -84,7 +91,7 @@ namespace Zadatak_1
                     {
                         for (int j = 0; j < matrix.GetLength(1); j++)
                         {
-                            if (matrix[i, j] % 2 != 0)
+                            if (matrix[i, j] % 2 == 1)
                             {
                                 oddNumbers[a] = matrix[i, j];
                                 a++;
@@ -92,7 +99,7 @@ namespace Zadatak_1
                         }
                     }
                 }
-                
+                //Write to file
                 StreamWriter sw = new StreamWriter(@"../../OddNumbersArray.txt");
                 foreach (int number in oddNumbers)
                 {
@@ -103,8 +110,10 @@ namespace Zadatak_1
                 Monitor.Pulse(l);
             }
         }
-    
 
+        /// <summary>
+        /// Print from a file on the console
+        /// </summary>
         static void OddNumbersPrint()
         {
             
