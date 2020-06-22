@@ -59,7 +59,7 @@ namespace Zadatak_1
                     arrayRnd[i] = random.Next(10, 100);
                 }
                 
-                Monitor.Pulse(l);
+                Monitor.Pulse(l); //sending another thread signal that generating is done
             }
         }
         /// <summary>
@@ -77,7 +77,8 @@ namespace Zadatak_1
                     {
                         if (matrix[i, j] % 2 == 1)
                         {
-                            count++;
+                            count++; // adding odd numbers
+
                         }
                     }
                 }
@@ -107,7 +108,7 @@ namespace Zadatak_1
                 }
                 sw.Close();
                 
-                Monitor.Pulse(l);
+                Monitor.Pulse(l); //sending another thread signal that generating is done
             }
         }
 
@@ -116,13 +117,14 @@ namespace Zadatak_1
         /// </summary>
         static void OddNumbersPrint()
         {
-            
+
+            // locking method
             lock (l)
             {
                 
                 while (oddNumbers == null)
                 {
-                    Monitor.Wait(l);
+                    Monitor.Wait(l); //Waiting for array to be created
                 }
                 
                 string[] red = File.ReadAllLines(@"../../OddNumbersArray.txt");
@@ -132,10 +134,12 @@ namespace Zadatak_1
                 }
             }
         }
+
         static void Main(string[] args)
         {
-            Thread matrix = new Thread(Matrix);
-            matrix.Start();
+            Thread matrix = new Thread(Matrix);//Creatig thread
+            matrix.Start();//thread start
+
             Thread rndNumbers = new Thread(RandomNumbers);
             rndNumbers.Start();
             matrix.Join();
