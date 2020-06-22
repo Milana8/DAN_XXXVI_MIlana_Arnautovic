@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -59,12 +60,68 @@ namespace Zadatak_1
         }
         static void OddNumbers()
         {
-
+            lock (l)
+            {
+                int count = 0;
+                
+                for (int i = 0; i < matrix.GetLength(0); i++)
+                {
+                    for (int j = 0; j < matrix.GetLength(1); j++)
+                    {
+                        if (matrix[i, j] % 2 == 1)
+                        {
+                            count++;
+                        }
+                    }
+                }
+                
+                oddNumbers = new int[count];
+                int a = 0;
+                
+                while (a < count)
+                {
+                    for (int i = 0; i < matrix.GetLength(0); i++)
+                    {
+                        for (int j = 0; j < matrix.GetLength(1); j++)
+                        {
+                            if (matrix[i, j] % 2 != 0)
+                            {
+                                oddNumbers[a] = matrix[i, j];
+                                a++;
+                            }
+                        }
+                    }
+                }
+                
+                StreamWriter sw = new StreamWriter(@"../../OddNumbersArray.txt");
+                foreach (int number in oddNumbers)
+                {
+                    sw.WriteLine(number);
+                }
+                sw.Close();
+                
+                Monitor.Pulse(l);
+            }
         }
+    
 
         static void OddNumbersPrint()
         {
-
+            
+            lock (l)
+            {
+                
+                while (oddNumbers == null)
+                {
+                    Monitor.Wait(l);
+                }
+                
+                string[] red = File.ReadAllLines(@"../../OddNumbersArray.txt");
+                foreach (string number in red)
+                {
+                    Console.WriteLine(number);
+                }
+            }
         }
         static void Main(string[] args)
         {
