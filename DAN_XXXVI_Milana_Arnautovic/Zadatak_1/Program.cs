@@ -15,6 +15,8 @@ namespace Zadatak_1
         static int[,] matrix;
         static int[] arrayRnd;
         static int[] oddNumbers;
+
+
         /// <summary>
         ///  Matrix creation method
         /// </summary>
@@ -44,12 +46,13 @@ namespace Zadatak_1
                 }
             }
         }
+
         /// <summary>
         ///Method that generates random numbers
         /// </summary>
         static void RandomNumbers()
         {
-             
+            Thread.Sleep(20);
             lock (l)
             {
                 arrayRnd = new int[10000];
@@ -62,6 +65,7 @@ namespace Zadatak_1
                 Monitor.Pulse(l); //sending another thread signal that generating is done
             }
         }
+
         /// <summary>
         ///  A method that writes all odd elements of a matrix to a file
         /// </summary>
